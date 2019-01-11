@@ -15,10 +15,10 @@ public class WordCount {
 
     public static void main(String[] args) {
         WordCount wc = new WordCount();
-        wc.setString("The quick brown fox jumped over the lazy dogs.  That silly fox.");
-        wc.report(5);
+        //wc.setString("The quick brown fox jumped over the lazy dogs.  That silly fox.");
+        //wc.report(5);
         try {
-            System.out.println(wc.doReport("http://www.textfiles.com/etext/FICTION/warpeace.txt", 10));
+            System.out.println(wc.doReport("http://www.textfiles.com/etext/FICTION/warpeace.txt", 20));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -29,11 +29,22 @@ public class WordCount {
     }
 
     public void setUrl(String s) throws IOException {
-        URL url = new URL(s);
-        try(InputStream is = url.openStream()) {
-            try(Scanner scan = new Scanner(is)){
-                parseVals(scan);
+        if (s == null) {
+            System.err.println("Url not found");
+            setString("");
+            return;
+        }
+        try {
+            URL url = new URL(s);
+            try(InputStream is = url.openStream()) {
+                try(Scanner scan = new Scanner(is)){
+                    parseVals(scan);
+                }
             }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            setString("");
+            return;
         }
     }
     
@@ -62,7 +73,7 @@ public class WordCount {
 
     private void parseVals(Scanner scan) {
         map.clear();
-        scan.useDelimiter(Pattern.compile("\\W"));
+        scan.useDelimiter(Pattern.compile("[^\\w']"));
         while(scan.hasNext()) {
             String key = scan.next().toLowerCase();
             if (key.isEmpty()) {
