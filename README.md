@@ -27,6 +27,6 @@ cd jetty
 export JETTY_HOME=$(pwd)
 cd ..
 mkdir project
-java -jar $JETTY_HOME/start.jar --create-startd --add-to-start=jsp,http
+java -jar $JETTY_HOME/start.jar --create-startd --add-to-start=jsp,http,deploy
 echo "<html><body><h1>AA</h1></body></html>" > index.jsp
 ```
