@@ -25,4 +25,8 @@ unzip jetty.zip
 mv jetty-distribution* jetty
 cd jetty
 export JETTY_HOME=$(pwd)
+cd ..
+mkdir project
+java -jar $JETTY_HOME/start.jar --create-startd --add-to-start=jsp,http
+echo "<html><body><h1>AA</h1></body></html>" > index.jsp
 ```
