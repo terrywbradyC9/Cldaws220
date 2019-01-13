@@ -17,13 +17,12 @@ TODO: modify maven to deploy jsp file appropriately.
 ## Server startup script
 
 ```
-sudo yum install java-1.8.0
-sudo yum remove java-1.7.0-openjdk
+sudo -n yum install java-1.8.0
+sudo -n yum remove java-1.7.0-openjdk
 export JETTY=https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.4.14.v20181114/jetty-distribution-9.4.14.v20181114.zip
 curl -o jetty.zip $JETTY
-unzip -d /home/ec2-user jetty.zip
-cd /home/ec2-user
-mv jetty-distribution-9.4.14 jetty
+unzip jetty.zip
+mv jetty-distribution* jetty
 cd jetty
 export JETTY_HOME=$(pwd)
 ```
