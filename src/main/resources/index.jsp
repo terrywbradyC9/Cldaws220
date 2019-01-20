@@ -9,5 +9,9 @@ try {
   System.err.println(e.getMessage());
 }
 String url = request.getParameter("url") == null ? "" : request.getParameter("url");
+if (url.isEmpty()) {
+  response.sendRedirect("input.html");
+} else {
+  out.print(wc.doReport(request.getParameter("url"), count));
+}
 %>
-<%=wc.doReport(request.getParameter("url"), count)%>
