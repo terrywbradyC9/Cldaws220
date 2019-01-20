@@ -13,3 +13,25 @@ TODO: modify maven to deploy jsp file appropriately.
   - deploy.ini
   - http.ini
   - jsp.ini
+  
+## Server startup script
+
+```
+sudo -n yum install java-1.8.0
+sudo -n yum remove java-1.7.0-openjdk
+export JETTY=https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.4.14.v20181114/jetty-distribution-9.4.14.v20181114.zip
+curl -o jetty.zip $JETTY
+unzip jetty.zip
+mv jetty-distribution* jetty
+cd jetty
+export JETTY_HOME=$(pwd)
+cd ..
+mkdir project
+cd project
+java -jar $JETTY_HOME/start.jar --create-startd --add-to-start=jsp,http,deploy
+mkdir webapps
+cd webapps
+mkdir app
+cd app
+echo "<html><body><h1>AA</h1></body></html>" > index.jsp
+```
