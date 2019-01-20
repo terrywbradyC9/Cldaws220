@@ -2,6 +2,12 @@
 <%@ page import="edu.uw.cldaws.WordCount" %>
 <%
 WordCount wc = new WordCount();
-int count = request.getParameter("count") == null ? 10: Integer.parseInt(request.getParameter("count"));
+int count = 10;
+try {
+  count = request.getParameter("count") == null ? 10: Integer.parseInt(request.getParameter("count"));
+} catch(NumberFormatException e) {
+  System.err.println(e.getMessage());
+}
+String url = request.getParameter("url") == null ? "" : request.getParameter("url");
 %>
 <%=wc.doReport(request.getParameter("url"), count)%>
