@@ -13,25 +13,55 @@ TODO: modify maven to deploy jsp file appropriately.
   - deploy.ini
   - http.ini
   - jsp.ini
-  
+
 ## Server startup script
 
 ```
-sudo -n yum install java-1.8.0
-sudo -n yum remove java-1.7.0-openjdk
 export JETTY=https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.4.14.v20181114/jetty-distribution-9.4.14.v20181114.zip
+export MAVEN=http://apache.osuosl.org/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.zip
+
+sudo -n yum install java-1.8.0-openjdk-devel
+sudo -n yum remove java-1.7.0-openjdk
+sudo -n yum install git
+
 curl -o jetty.zip $JETTY
 unzip jetty.zip
 mv jetty-distribution* jetty
 cd jetty
 export JETTY_HOME=$(pwd)
 cd ..
-mkdir project
-cd project
+
+curl -o maven.zip $MAVEN
+unzip maven.zip
+export PATH=$PATH:/home/ec2-user/apache-maven-3.6.0/bin
+```
+
+## Project Build
+```
+git clone https://github.com/terrywbrady/CldAws220.git
+cp CldAws220
+mvn install
+
+mkdir awsProj
+cd awsProj
 java -jar $JETTY_HOME/start.jar --create-startd --add-to-start=jsp,http,deploy
 mkdir webapps
 cd webapps
-mkdir app
-cd app
-echo "<html><body><h1>AA</h1></body></html>" > index.jsp
+mkdir wordCount
+cd wordCount
+mkdir WEB-INF
+cp /home/ec2-user/CldAws220/src/main/resources/* .
+cp /home/ec2-user/CldAws220/target/*.jar WEB-INF
+```
+
+## Enable Service startup
+
+`sudo vi /etc/rc.local`
+
+Add the following
+
+```
+export JETTY_HOME=/home/ec2-user/jetty
+cd /home/ec2-user/awsProj
+java -jar $JETTY_HOME/start.jar
 ```
