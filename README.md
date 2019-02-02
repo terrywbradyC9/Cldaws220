@@ -20,6 +20,7 @@ TODO: modify maven to deploy jsp file appropriately.
 export JETTY=https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.4.14.v20181114/jetty-distribution-9.4.14.v20181114.zip
 export MAVEN=http://apache.osuosl.org/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.zip
 
+sudo yum -y update
 sudo -n yum install java-1.8.0-openjdk-devel
 sudo -n yum remove java-1.7.0-openjdk
 sudo -n yum install git
@@ -56,6 +57,21 @@ cp /home/ec2-user/CldAws220/src/main/resources/* .
 cp /home/ec2-user/CldAws220/target/*.jar WEB-INF/lib
 ```
 
+### project update
+
+```
+cd /home/ec2-user/awsProj/webapps/wordCount
+cp /home/ec2-user/CldAws220/src/main/resources/* .
+cp /home/ec2-user/CldAws220/target/*.jar WEB-INF
+```
+
+### project update Cloud9
+
+```
+cd /home/ec2-user/awsProj/webapps/wordCount
+cp /home/ec2-user/environment/CldAws220/src/main/resources/* .
+cp /home/ec2-user/environment/CldAws220/target/*.jar WEB-INF
+```
 ## Enable Service startup
 
 `sudo vi /etc/rc.local`
