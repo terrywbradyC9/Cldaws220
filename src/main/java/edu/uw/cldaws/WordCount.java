@@ -11,12 +11,23 @@ import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 
+import software.amazon.awssdk.core.client.builder.SdkDefaultClientBuilder;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 
+import software.amazon.awssdk.services.sqs.SqsClient;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
+import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
+import software.amazon.awssdk.services.sqs.model.GetQueueUrlResponse;
+import software.amazon.awssdk.services.sqs.model.Message;
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
+import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class WordCount {
@@ -25,7 +36,9 @@ public class WordCount {
     private static String URL = "url";
     private static String RESULT = "result";
     private static String CACHE="WordCountCache";
-    
+    private Region REGION = Region.US_WEST_2;
+    private String QUEUE = "homework-B3";
+
     public static void main(String[] args) {
         WordCount wc = new WordCount();
         //wc.setString("The quick brown fox jumped over the lazy dogs.  That silly fox.");
@@ -66,7 +79,9 @@ public class WordCount {
         setUrl(url);
         int count = n > MAX ? MAX: n;
         Collection<String> results = getTopKeys(count);
-        return new Gson().toJson(results);
+        String result = new Gson().toJson(results);
+        putCacheVal(url, result);
+        return result;
     }
 
     
@@ -102,11 +117,76 @@ public class WordCount {
         }
     }
     
+    public String message(String s) {
+        HashMap<String,String> map = new HashMap<>();
+        map.put("message", s);
+        return new Gson().toJson(map);
+    }
+    
+    private SqsClient getSqsClient() {
+        return SqsClient.builder().region(REGION).build();
+    }
+    
+    private String getQueueUrl(SqsClient sqsClient) {
+        GetQueueUrlResponse getQueueUrlResponse =
+                sqsClient.getQueueUrl(GetQueueUrlRequest.builder().queueName(QUEUE).build());
+        return getQueueUrlResponse.queueUrl();
+    }
+    
+    
+    public boolean queueRequest(String url) {
+        SqsClient sqsClient = getSqsClient();
+        String queueUrl = getQueueUrl(sqsClient);
+        sqsClient.sendMessage(SendMessageRequest.builder()
+                .queueUrl(queueUrl)
+                .messageBody(url)
+                .delaySeconds(10)
+                .build());
+        return true;
+    }
+    
+    public List<Message> getMessage(SqsClient sqsClient, String queueUrl) {
+        ReceiveMessageRequest receiveMessageRequest = ReceiveMessageRequest.builder()
+                .queueUrl(queueUrl)
+                .maxNumberOfMessages(1)
+                .build();
+        return sqsClient.receiveMessage(receiveMessageRequest).messages();
+    }
+
+    public void removeMessage(SqsClient sqsClient, String queueUrl, Message m) {
+        DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder()
+                .queueUrl(queueUrl)
+                .receiptHandle(m.receiptHandle())
+                .build();
+        sqsClient.deleteMessage(deleteMessageRequest);
+    }
+
+    
+    public void processQueue() throws IOException {
+        SqsClient sqsClient = getSqsClient();
+        String queueUrl = getQueueUrl(sqsClient);
+        List<Message> mlist = getMessage(sqsClient, queueUrl);
+        if (mlist.isEmpty()) {
+            System.out.println("No message ");
+        } else {
+            Message m = mlist.get(0);
+            String url  = m.toString();
+            System.out.println("Processing " + url);
+            String result = this.doReport(url, 10);
+            this.putCacheVal(url, result);
+            removeMessage(sqsClient, queueUrl, m);
+        }
+    }
+    
     public String doCacheReport(String url) throws IOException {
         String result = checkCacheVal(url);
+        
         if (result == null) {
-            result = doReport(url, 10); 
-            putCacheVal(url, result);
+            if (queueRequest(url)) {
+                return message("Not in cache. Request queued. Try again later.");
+            } else {
+                return message("Not in cache. Request could not be queued.");
+            }
         }
         return result;
     }
