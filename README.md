@@ -39,10 +39,10 @@ export PATH=$PATH:/home/ec2-user/apache-maven-3.6.0/bin
 ## Project Build
 ```
 git clone https://github.com/terrywbrady/CldAws220.git
-cp CldAws220
+cd CldAws220
 mvn install
 
-mkdir awsProj
+mkdir ~/awsProj
 cd awsProj
 java -jar $JETTY_HOME/start.jar --create-startd --add-to-start=jsp,http,deploy
 mkdir webapps
@@ -50,8 +50,10 @@ cd webapps
 mkdir wordCount
 cd wordCount
 mkdir WEB-INF
+cd WEB-INF
+mkdir lib
 cp /home/ec2-user/CldAws220/src/main/resources/* .
-cp /home/ec2-user/CldAws220/target/*.jar WEB-INF
+cp /home/ec2-user/CldAws220/target/*.jar WEB-INF/lib
 ```
 
 ## Enable Service startup
