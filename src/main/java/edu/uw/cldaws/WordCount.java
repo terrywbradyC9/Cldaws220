@@ -14,12 +14,16 @@ public class WordCount {
     private WordCountParser wcParser = new WordCountParser();
     private WordCountCache wcCache = new WordCountCache();
     private WordCountQueue wcQueue = new WordCountQueue();
+
     public static void main(String[] args) {
         WordCount wc = new WordCount();
+        private long start = new Date().getTime();
+        private long lastReport = new Date().getTime();
         try {
             while(true) {
                 wc.processQueue();
                 TimeUnit.SECONDS.sleep(1);
+                lastReport = reportStatus(start, lastReport);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -51,18 +55,14 @@ public class WordCount {
             long min = (now - start)/60_000;
             System.out.println(String.format("System has run for %d min", min));
             return now;
-        } else {
-            System.out.println(diff);
         }
         return lastReport;
     }
     
-    public void processQueue() throws IOException {
+    public boolean processQueue() throws IOException {
         List<WordCountMessage> mlist = wcQueue.getMessage();
-        long start = new Date().getTime();
-        long lastReport = start;
         if (mlist.isEmpty()) {
-            lastReport = reportStatus(start, lastReport);
+            return false;
         } else {
             WordCountMessage m = mlist.get(0);
             String url  = m.getUrl();
@@ -76,6 +76,7 @@ public class WordCount {
             }
             wcQueue.removeMessage(m);
         }
+        return true;
     }
    
     public static String returnJsonMessage(String s) {
