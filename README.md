@@ -62,7 +62,14 @@ cp /home/ec2-user/CldAws220/target/*.jar WEB-INF/lib
 ```
 cd /home/ec2-user/awsProj/webapps/wordCount
 cp /home/ec2-user/CldAws220/src/main/resources/* .
-cp /home/ec2-user/CldAws220/target/*.jar WEB-INF
+cp /home/ec2-user/CldAws220/target/*.jar WEB-INF/lib
+```
+
+## Project Build
+```
+cd /home/ec2-user/CldAws220
+git pull origin
+mvn install
 ```
 
 ### project update Cloud9
@@ -70,7 +77,7 @@ cp /home/ec2-user/CldAws220/target/*.jar WEB-INF
 ```
 cd /home/ec2-user/awsProj/webapps/wordCount
 cp /home/ec2-user/environment/CldAws220/src/main/resources/* .
-cp /home/ec2-user/environment/CldAws220/target/*.jar WEB-INF
+cp /home/ec2-user/environment/CldAws220/target/*.jar WEB-INF/lib
 ```
 ## Enable Service startup
 
