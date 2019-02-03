@@ -46,10 +46,13 @@ public class WordCount {
 
     public long reportStatus(long start, long lastReport) {
         long now = new Date().getTime();
-        if ((now - lastReport) > 60_000) {
+        long diff = now - lastReport;
+        if (diff > 60_000) {
             long min = (now - start)/60_000;
             System.out.println(String.format("System has run for %d min", min));
             return now;
+        } else {
+            System.out.println(diff);
         }
         return lastReport;
     }
