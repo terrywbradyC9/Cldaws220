@@ -14,6 +14,6 @@ String url = request.getParameter("url") == null ? "" : request.getParameter("ur
 if (url.isEmpty()) {
   response.sendRedirect("input.html");
 } else {
-  out.print(wc.doCacheReport(request.getParameter("url")));
+  out.print(wc.checkCache(request.getParameter("url")));
 }
 %>
