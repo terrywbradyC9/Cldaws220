@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.google.gson.Gson;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -43,22 +44,37 @@ public class WordCount {
         return result;
     }
 
+    public long reportStatus(long start, long lastReport) {
+        long now = new Date().getTime();
+        if ((now - lastReport) > 60_000) {
+            long min = (now - start)/60_000;
+            System.out.println(String.format("System has run for %d min", min));
+        }
+        return now;
+    }
     
     public void processQueue() throws IOException {
         List<WordCountMessage> mlist = wcQueue.getMessage();
+        long start = new Date().getTime();
+        long lastReport = start;
         if (mlist.isEmpty()) {
-            System.out.println("No message ");
+            lastReport = reportStatus(start, lastReport);
         } else {
             WordCountMessage m = mlist.get(0);
             String url  = m.getUrl();
-            System.out.println("Processing " + url);
-            String result = wcParser.getCountAsJson(url);
-            wcCache.putCacheVal(url, result);
+            String result = wcCache.checkCacheVal(url);
+            if (result == null) {
+                System.out.println("Processing " + url);
+                result = wcParser.getCountAsJson(url);
+                wcCache.putCacheVal(url, result);
+            } else {
+                System.out.println("Already processed" + url);
+            }
             wcQueue.removeMessage(m);
         }
     }
    
-    public String returnJsonMessage(String s) {
+    public static String returnJsonMessage(String s) {
         HashMap<String,String> map = new HashMap<>();
         map.put("message", s);
         return new Gson().toJson(map);

@@ -25,23 +25,21 @@ public class WordCountParser {
             setString("");
             return;
         }
-        try {
-            URL url = new URL(s);
-            try(InputStream is = url.openStream()) {
-                try(Scanner scan = new Scanner(is)){
-                    parseVals(scan);
-                }
+        URL url = new URL(s);
+        try(InputStream is = url.openStream()) {
+            try(Scanner scan = new Scanner(is)){
+                parseVals(scan);
             }
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-            setString("");
-            return;
         }
     }
 
     //Week 1 - allow count param, disregard as we test caching
-    public String getCountAsJson(String url) throws IOException {
-        setUrl(url);
+    public String getCountAsJson(String url) {
+        try {
+            setUrl(url);
+        } catch (IOException e) {
+            return WordCount.returnJsonMessage(e.getMessage());
+        }
         Collection<String> results = getTopKeys(COUNT);
         String result = new Gson().toJson(results);
         return result;
