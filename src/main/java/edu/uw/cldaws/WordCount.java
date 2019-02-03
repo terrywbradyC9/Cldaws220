@@ -51,7 +51,7 @@ public class WordCount {
             System.out.println(String.format("System has run for %d min", min));
             return now;
         }
-        return lastCount;
+        return lastReport;
     }
     
     public void processQueue() throws IOException {
