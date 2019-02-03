@@ -17,13 +17,13 @@ public class WordCount {
 
     public static void main(String[] args) {
         WordCount wc = new WordCount();
-        private long start = new Date().getTime();
-        private long lastReport = new Date().getTime();
+        long start = new Date().getTime();
+        long lastReport = new Date().getTime();
         try {
             while(true) {
                 wc.processQueue();
                 TimeUnit.SECONDS.sleep(1);
-                lastReport = reportStatus(start, lastReport);
+                lastReport = wc.reportStatus(start, lastReport);
             }
         } catch (IOException e) {
             e.printStackTrace();
