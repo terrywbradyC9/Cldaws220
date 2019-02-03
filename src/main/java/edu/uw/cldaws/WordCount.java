@@ -49,10 +49,9 @@ public class WordCount {
         if ((now - lastReport) > 60_000) {
             long min = (now - start)/60_000;
             System.out.println(String.format("System has run for %d min", min));
-        } else {
-            System.out.println(now);
+            return now;
         }
-        return now;
+        return lastCount;
     }
     
     public void processQueue() throws IOException {
