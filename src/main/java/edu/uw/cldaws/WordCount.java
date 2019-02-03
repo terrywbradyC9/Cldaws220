@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class WordCount {
 
@@ -15,8 +16,13 @@ public class WordCount {
     public static void main(String[] args) {
         WordCount wc = new WordCount();
         try {
-            wc.processQueue();
+            while(true) {
+                wc.processQueue();
+                TimeUnit.SECONDS.sleep(1);
+            }
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -44,7 +50,7 @@ public class WordCount {
             System.out.println("No message ");
         } else {
             WordCountMessage m = mlist.get(0);
-            String url  = m.toString();
+            String url  = m.getUrl();
             System.out.println("Processing " + url);
             String result = wcParser.getCountAsJson(url);
             wcCache.putCacheVal(url, result);
