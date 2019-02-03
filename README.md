@@ -91,3 +91,10 @@ export JETTY_HOME=/home/ec2-user/jetty
 cd /home/ec2-user/awsProj
 java -jar $JETTY_HOME/start.jar
 ```
+
+## Message Processor
+
+```
+cd /home/ec2-user/CldAws220
+java -jar target/CldAws220*.jar
+```
