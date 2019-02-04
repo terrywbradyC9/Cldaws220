@@ -137,3 +137,5 @@ java -jar $JETTY_HOME/start.jar
 cd /home/ec2-user/CldAws220
 java -jar target/CldAws220*.jar
 ```
+
+## IDE Notes
