@@ -36,6 +36,12 @@ public class WordCount {
     }
    
     public String checkUrl(String url) throws IOException {
+        if (url == null) {
+            return returnJsonMessage("'url' parameter must be provided");
+        }
+        if (url.isEmpty()) {
+            return returnJsonMessage("'url' parameter must be provided");
+        }
         String result = wcCache.checkCacheVal(url);
         
         if (result == null) {
